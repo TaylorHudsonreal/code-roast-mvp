@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Code Roast & Re-Factor | MVP</title>
+    <title>Code Roast & Re-Factor | MVP v2.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;700&display=swap" rel="stylesheet">
@@ -36,9 +36,6 @@
         .cursor-blink {
             animation: blink 1s infinite;
         }
-        .transition-all {
-            transition: all 0.3s ease-in-out;
-        }
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -54,7 +51,7 @@
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col p-4 md:p-8 selection:bg-green-500/30" x-data="roastApp()">
+<body class="min-h-screen flex flex-col p-4 md:p-8 selection:bg-green-500/30" x-data="roastApp()" x-init="init()">
     <div class="scanline fixed inset-0 z-50 opacity-10 pointer-events-none"></div>
 
     <header class="max-w-5xl mx-auto w-full mb-8 text-center">
@@ -77,34 +74,51 @@
                     <span class="mr-2">●</span> input_source.hack
                 </div>
             </div>
-            <div class="p-4 flex-grow">
+            
+            <div class="p-4 flex-grow bg-[#0d0d0d]">
                 <textarea 
                     x-model="inputCode"
                     spellcheck="false"
+                    @input="error = ''"
                     class="w-full h-64 bg-transparent border-none focus:ring-0 code-font text-green-400 placeholder-gray-700 resize-none"
                     placeholder="// Paste your mid code here... if you dare."></textarea>
+                
+                <template x-if="error">
+                    <div class="text-red-500 text-xs font-mono mt-2 flex items-center">
+                        <span class="mr-2">⚠️</span> <span x-text="error"></span>
+                    </div>
+                </template>
             </div>
-            <div class="p-4 bg-[#0d0d0d] border-t border-gray-800 flex justify-between items-center">
-                <div class="text-[10px] text-gray-600 font-mono uppercase tracking-widest" x-text="detectLanguage(inputCode) + ' detected'"></div>
-                <button 
-                    @click="roastMe()"
-                    :disabled="loading || !inputCode.trim()"
-                    class="px-8 py-3 bg-green-600 hover:bg-green-500 disabled:bg-gray-800/50 disabled:text-gray-600 text-black font-bold rounded-lg transition-all transform hover:scale-[1.02] active:scale-95 flex items-center space-x-2 shadow-lg shadow-green-900/10">
-                    <span x-text="loading ? 'ANALYZING TRASH...' : 'ROAST ME'"></span>
-                    <svg x-show="!loading" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M11.3 1.047a1 1 0 01.897.953v6.22l4.64-1.547a1 1 0 011.132 1.511l-6.5 6.5a1 1 0 01-1.414-1.414l5.122-5.122-4.34 1.447A1 1 0 019 9.586V3.366l-4.64 1.547a1 1 0 01-1.132-1.511l6.5-6.5a1 1 0 011.072-.255z" clip-rule="evenodd" />
-                    </svg>
-                </button>
+
+            <div class="p-4 bg-[#111] border-t border-gray-800 flex flex-wrap gap-4 justify-between items-center">
+                <div class="flex items-center space-x-2 bg-[#0a0a0a] p-1 rounded-lg border border-gray-800">
+                    <template x-for="m in ['Mild', 'Brutal', '67maxxing']">
+                        <button 
+                            @click="mode = m"
+                            :class="mode === m ? 'bg-green-600 text-black font-bold' : 'text-gray-500 hover:text-gray-300'"
+                            class="px-3 py-1 rounded text-[10px] uppercase tracking-tighter transition-all"
+                            x-text="m"></button>
+                    </template>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <div class="text-[10px] text-gray-600 font-mono uppercase tracking-widest hidden sm:block" x-text="detectLanguage(inputCode) + ' detected'"></div>
+                    <button 
+                        @click="roastMe()"
+                        :disabled="loading"
+                        class="px-8 py-3 bg-green-600 hover:bg-green-500 disabled:bg-gray-800/50 disabled:text-gray-600 text-black font-bold rounded-lg transition-all transform hover:scale-[1.02] active:scale-95 flex items-center space-x-2 shadow-lg shadow-green-900/10">
+                        <span x-text="loading ? 'ANALYZING TRASH...' : 'ROAST ME'"></span>
+                    </button>
+                </div>
             </div>
         </section>
 
-        <!-- Output Sections (Hidden until roasted) -->
-        <div x-show="showResults" x-cloak x-transition:enter="transition ease-out duration-700" x-transition:enter-start="opacity-0 translate-y-12" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-8 pb-12">
-            
+        <!-- Output Sections -->
+        <div x-show="showResults" x-cloak x-transition class="space-y-8 pb-12">
             <!-- The Roast -->
             <section class="bg-red-950/10 border border-red-900/30 rounded-xl overflow-hidden">
                 <div class="bg-red-900/20 px-4 py-2 border-b border-red-900/30 text-red-400 font-bold flex items-center text-xs tracking-widest uppercase">
-                    <span class="mr-2">🔥</span> The Verdict
+                    <span class="mr-2">🔥</span> The Verdict (<span x-text="mode"></span>)
                 </div>
                 <div class="p-6 text-xl md:text-2xl font-bold text-red-200 italic leading-relaxed code-font">
                     "<span x-text="roastText"></span><span class="cursor-blink">_</span>"
@@ -117,8 +131,8 @@
                     <div class="text-blue-400 font-bold flex items-center text-xs tracking-widest uppercase">
                         <span class="mr-2">✨</span> The Ascension (Refactored)
                     </div>
-                    <button @click="copyToClipboard()" class="text-[10px] font-bold text-gray-500 hover:text-blue-400 transition-colors uppercase tracking-widest bg-gray-800/30 px-2 py-1 rounded">
-                        <span x-text="copyText"></span>
+                    <button @click="copyToClipboard(refactoredCode)" class="text-[10px] font-bold text-gray-500 hover:text-blue-400 transition-colors uppercase tracking-widest bg-gray-800/30 px-2 py-1 rounded">
+                        <span x-text="copyText">COPY</span>
                     </button>
                 </div>
                 <div class="p-4 bg-[#050505] flex-grow overflow-x-auto">
@@ -126,6 +140,23 @@
                 </div>
             </section>
         </div>
+
+        <!-- History -->
+        <section x-show="history.length > 0" x-cloak class="mt-8 border-t border-gray-900 pt-8">
+            <h3 class="text-xs font-bold text-gray-600 uppercase tracking-[0.2em] mb-4">Roast History</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <template x-for="(item, index) in history" :key="index">
+                    <div @click="loadFromHistory(item)" class="bg-[#111] border border-gray-800 p-4 rounded-lg cursor-pointer hover:border-gray-600 transition-all group">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-[10px] text-green-500 font-mono" x-text="item.lang"></span>
+                            <span class="text-[9px] text-gray-700" x-text="item.date"></span>
+                        </div>
+                        <p class="text-xs text-gray-400 line-clamp-2 italic" x-text="item.roast"></p>
+                    </div>
+                </template>
+            </div>
+            <button @click="clearHistory()" class="mt-4 text-[9px] text-gray-700 hover:text-red-900 uppercase tracking-widest transition-colors">Clear Records</button>
+        </section>
     </main>
 
     <footer class="py-8 text-center text-gray-700 text-[10px] font-mono border-t border-gray-900 mt-8">
@@ -134,7 +165,7 @@
             <span>67MAXXING: ENABLED</span>
             <span>PEASANT_FILTER: TRUE</span>
         </div>
-        <div>&copy; 2026 Interaction Company of California | No Auras were harmed in the making of this roast.</div>
+        <div>&copy; 2026 Interaction Company of California | Elevating auras worldwide.</div>
     </footer>
 
     <script>
@@ -146,64 +177,106 @@
                 loading: false,
                 showResults: false,
                 copyText: 'COPY',
+                mode: 'Brutal',
+                error: '',
+                history: [],
+                
+                init() {
+                    const saved = localStorage.getItem('roast_history');
+                    if (saved) this.history = JSON.parse(saved);
+                },
+
                 roasts: {
-                    js: [
-                        "I've seen 'Inspect Element' scripts with more aura than this. This code has zero rizz. Are you 67maxxing your technical debt? This callback hell is making my silicon ache, you absolute peasant.",
-                        "Your variable naming suggests you're currently in a 'getting cooked' era. This JS is so bloated I thought I was looking at a node_modules folder. Delete this and your GitHub account immediately.",
-                        "Standard peasant-tier JavaScript. Using 'var' in 2026? You're definitely not looksmaxxing your codebase. This logic has the structural integrity of a wet napkin.",
-                        "Async/await? More like Async/afraid. You're handling promises like a toddler handles a live grenade. Absolute bottom-tier developer energy."
-                    ],
-                    python: [
-                        "This Python code is so slow it's basically a PowerPoint presentation. You're indentation-maxxing for nothing. The PEP8 gods are weeping. This isn't even 'mid', it's straight 'low-tier god' territory.",
-                        "Importing the whole universe just to print 'Hello World'? Peak peasant behavior. Your aura is literally negative right now. Go back to Scratch before you hurt yourself.",
-                        "I've seen better logic in a Minecraft redstone tutorial. This script has the efficiency of a dial-up modem. You're definitely not 67maxxing your performance.",
-                        "List comprehensions aren't a personality trait, especially when you use them this poorly. You're coding like a GPT-2 hallucination."
-                    ],
-                    cpp: [
-                        "Memory leaks? In this economy? You're raw-dogging pointers like a peasant. This C++ code has the aura of a segfault waiting to happen. 67maxxing your crashes, I see.",
-                        "Your templates are so messy I can feel my compiler contemplating retirement. This is why we can't have nice things. Absolute peasant-tier abstraction.",
-                        "Are you trying to win a 'most obfuscated code' contest? Because you're winning. This C++ logic is so convoluted it probably thinks it's smart. It isn't.",
-                        "Directly managing memory like it's 1972? Your manual 'delete' calls are about as reliable as a chocolate teapot."
-                    ],
-                    generic: [
-                        "This code is so bad it's actually impressive. You've managed to 67maxx your stupidity while maintaining the aura of a lost toddler. An absolute peasant move.",
-                        "I've seen 'Inspect Element' trolls with better architectural skills. This isn't just 'mid', it's a crime against computing. Your developer rizz is non-existent.",
-                        "Is this a joke or are you actually this bad? This code has the structural integrity of a sandcastle in a tsunami. Peak peasant energy.",
-                        "Your logic is so circular it's basically a zero-auras fidget spinner. Reconsider your career choices."
-                    ]
+                    js: {
+                        Mild: ["This logic is a bit 'mid'. You're using 'var'? That's a classic peasant move, but we can fix it.", "Not bad, but your code has the aura of a junior dev on their first day."],
+                        Brutal: ["I've seen 'Inspect Element' scripts with more rizz. This callback hell is making my silicon ache.", "Your variable naming suggests you're currently in a 'getting cooked' era. Absolute trash."],
+                        '67maxxing': ["You're 67maxxing your technical debt. This code has zero developer rizz. Delete your account.", "Your technical aura is literally negative. This JS is so bloated I thought it was node_modules."]
+                    },
+                    python: {
+                        Mild: ["Pythonic? Barely. It works, but the PEP8 gods aren't smiling.", "A bit slow, like a PowerPoint presentation. Let's speed it up."],
+                        Brutal: ["This Python code is straight 'low-tier god' territory. Peak peasant behavior.", "I've seen better logic in a Minecraft redstone tutorial. You're indentation-maxxing for nothing."],
+                        '67maxxing': ["Your performance is the opposite of 67maxxing. This script has the efficiency of a dial-up modem.", "Negative aura detected. You're coding like a GPT-2 hallucination."]
+                    },
+                    generic: {
+                        Mild: ["This works, but it's not 'high-aura' material. Let's polish it.", "Average peasant logic. Acceptable, but we can do better."],
+                        Brutal: ["This code is so bad it's actually impressive. A crime against computing.", "Your developer rizz is non-existent. This logic is a circular zero-auras fidget spinner."],
+                        '67maxxing': ["Peak peasant energy. You've managed to 67maxx your stupidity.", "Absolute bottom-tier developer energy. Reconsider your life choices."]
+                    }
                 },
+
                 refactors: {
-                    js: "// Refactored for maximum aura\nconst optimizeData = (data) => \n    data?.map(item => ({ ...item, rizz: 100 })) ?? [];\n\n// 67maxxing the efficiency\nexport const processInput = async (input) => {\n    const result = await streamProcessor(input);\n    return result.filter(Boolean);\n};",
-                    python: "# Refactored with 67maxxing efficiency\ndef get_aura_data(items: list) -> list:\n    return [item.optimize() for item in items if item.is_valid]\n\n# Peasant-proof async execution\nasync def main():\n    results = await gather_results()\n    aura_level = max(results) if results else 0\n    print(f'Rizz level: {aura_level}')",
-                    cpp: "// No more peasant-tier pointers\n#include <memory>\n#include <vector>\n\ntemplate <typename T>\nauto achieve_ascension(std::vector<T>&& items) {\n    return std::make_unique<DataContainer>(std::move(items));\n}\n\n// 67maxxing memory safety\nvoid process() {\n    auto data = achieve_ascension(get_raw_input());\n    data->execute_clean();\n}",
-                    generic: "// Cleaned up your peasant logic\nconst ASCENSION_LEVEL = '67MAXXED';\n\nfunction main() {\n    const cleanAura = true;\n    const rizzLevel = Infinity;\n    return { status: ASCENSION_LEVEL, cleanAura, rizzLevel };\n}"
+                    js: "// Ascended JS\nconst process = (data) => data?.map(d => ({ ...d, rizz: 100 })) ?? [];",
+                    python: "# 67maxxing efficiency\ndef get_aura(items: list) -> list:\n    return [i.optimize() for i in items if i.is_valid]",
+                    generic: "// Cleaned up your logic\nfunction main() {\n  return { aura: 'MAX', rizz: Infinity };\n}"
                 },
+
                 detectLanguage(code) {
                     if (!code) return 'none';
                     const c = code.trim();
                     if (c.includes('def ') || (c.includes('import ') && c.includes(':'))) return 'python';
                     if (c.includes('const ') || c.includes('let ') || c.includes('function') || c.includes('=>')) return 'js';
-                    if (c.includes('#include') || c.includes('std::') || c.includes('cout <<')) return 'cpp';
                     return 'generic';
                 },
+
                 async roastMe() {
-                    if (!this.inputCode.trim()) return;
+                    if (!this.inputCode.trim()) {
+                        this.error = "ERROR: Cannot roast empty logic. Paste some trash first.";
+                        return;
+                    }
+
                     this.loading = true;
+                    this.error = '';
                     this.showResults = false;
                     
-                    // Artificial delay for "Deep Analysis" effect
-                    await new Promise(resolve => setTimeout(resolve, 1800));
-                    
-                    const lang = this.detectLanguage(this.inputCode);
-                    const langRoasts = this.roasts[lang] || this.roasts.generic;
-                    this.roastText = langRoasts[Math.floor(Math.random() * langRoasts.length)];
-                    this.refactoredCode = this.refactors[lang] || this.refactors.generic;
-                    
-                    this.loading = false;
-                    this.showResults = true;
+                    try {
+                        await new Promise(resolve => setTimeout(resolve, 1500));
+                        
+                        const lang = this.detectLanguage(this.inputCode);
+                        const options = this.roasts[lang] || this.roasts.generic;
+                        const modeRoasts = options[this.mode];
+                        
+                        this.roastText = modeRoasts[Math.floor(Math.random() * modeRoasts.length)];
+                        this.refactoredCode = this.refactors[lang] || this.refactors.generic;
+                        
+                        this.saveToHistory(lang);
+                        this.showResults = true;
+                    } catch (e) {
+                        this.error = "CRITICAL SYSTEM FAILURE: Peasant logic broke the roast engine.";
+                    } finally {
+                        this.loading = false;
+                    }
                 },
-                copyToClipboard() {
-                    navigator.clipboard.writeText(this.refactoredCode);
+
+                saveToHistory(lang) {
+                    const entry = {
+                        code: this.inputCode,
+                        roast: this.roastText,
+                        refactor: this.refactoredCode,
+                        lang: lang,
+                        date: new Date().toLocaleTimeString(),
+                        mode: this.mode
+                    };
+                    this.history.unshift(entry);
+                    this.history = this.history.slice(0, 10);
+                    localStorage.setItem('roast_history', JSON.stringify(this.history));
+                },
+
+                loadFromHistory(item) {
+                    this.inputCode = item.code;
+                    this.roastText = item.roast;
+                    this.refactoredCode = item.refactor;
+                    this.mode = item.mode;
+                    this.showResults = true;
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                },
+
+                clearHistory() {
+                    this.history = [];
+                    localStorage.removeItem('roast_history');
+                },
+
+                copyToClipboard(text) {
+                    navigator.clipboard.writeText(text);
                     this.copyText = 'COPIED!';
                     setTimeout(() => { this.copyText = 'COPY'; }, 2000);
                 }

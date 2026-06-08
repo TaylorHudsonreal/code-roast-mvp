@@ -1,29 +1,20 @@
-# 🔥 Code Roast & Re-Factor
+# 🔥 Code Roast & Re-Factor v2.0
 
 An elitist, terminal-themed MVP for roasting "peasant-tier" code and providing high-aura refactors. Built for developers who want to 67maxx their technical debt and improve their developer rizz.
 
-## ✨ Features
+## ✨ New in v2.0
 
-- **Dynamic Roasting**: Language-aware roasting engine for JavaScript, Python, and C++.
-- **Terminal Aesthetic**: Dark, high-contrast UI with scanlines, glowing borders, and Fira Code integration.
-- **The Ascension**: One-click refactor section to help you achieve "67maxxing" efficiency.
-- **Single-File Portability**: Entire application logic contained in a single `index.html` via Tailwind CSS and Alpine.js.
+- **Selectable Roast Modes**: Choose your level of pain:
+  - `Mild`: For sensitive peasants.
+  - `Brutal`: Standard industry-grade roasting.
+  - `67maxxing`: Maximum aura damage.
+- **Roast History**: Automatically saves your last 10 roasts to `localStorage` for future reflection on your failures.
+- **Improved Clipboard Support**: One-click "Ascension" copying.
+- **Robust Error Handling**: Real-time validation for empty inputs and simulated engine failures.
 
 ## 🚀 Deployment
 
 This project is configured for seamless deployment on **Vercel**.
-
-### Configuration
-The `vercel.json` file is included to handle routing and ensure the application behaves correctly as a single-page application.
-
-```json
-{
-  "name": "code-roast-mvp",
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
-  ]
-}
-```
 
 ### How to Deploy
 1. **Vercel CLI**:
@@ -38,8 +29,8 @@ The `vercel.json` file is included to handle routing and ensure the application 
 
 - **Styling**: Tailwind CSS
 - **Interactivity**: Alpine.js
-- **Typography**: Inter & Fira Code (via Google Fonts)
-- **Deployment**: Vercel
+- **State**: LocalStorage API
+- **Typography**: Inter & Fira Code
 
 ---
 &copy; 2026 Interaction Company of California. *Elevating logic, one roast at a time.*
