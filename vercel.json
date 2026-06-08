@@ -1,0 +1,6 @@
+{
+  "name": "code-roast-mvp",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Roast & Re-Factor | MVP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        [x-cloak] { display: none !important; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0a0a;
+            color: #d1d5db;
+        }
+        .code-font {
+            font-family: 'Fira Code', monospace;
+        }
+        .terminal-glow {
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.05);
+        }
+        .scanline {
+            background: linear-gradient(
+                to bottom,
+                rgba(18, 16, 16, 0) 50%,
+                rgba(0, 0, 0, 0.1) 50%
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        .cursor-blink {
+            animation: blink 1s infinite;
+        }
+        .transition-all {
+            transition: all 0.3s ease-in-out;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #222;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #333;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col p-4 md:p-8 selection:bg-green-500/30" x-data="roastApp()">
+    <div class="scanline fixed inset-0 z-50 opacity-10 pointer-events-none"></div>
+
+    <header class="max-w-5xl mx-auto w-full mb-8 text-center">
+        <h1 class="text-4xl md:text-6xl font-extrabold text-white tracking-tight mb-2">
+            CODE <span class="text-green-500">ROAST</span> & <span class="text-blue-500">RE-FACTOR</span>
+        </h1>
+        <p class="text-gray-500 uppercase tracking-widest text-sm font-semibold">Elevating your peasant-tier logic since 2026</p>
+    </header>
+
+    <main class="max-w-5xl mx-auto w-full grid grid-cols-1 gap-8 flex-grow">
+        <!-- Input Section -->
+        <section class="bg-[#111] border border-gray-800 rounded-xl overflow-hidden terminal-glow flex flex-col">
+            <div class="bg-[#1a1a1a] px-4 py-2 border-b border-gray-800 flex items-center justify-between">
+                <div class="flex space-x-2">
+                    <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+                    <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                    <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
+                </div>
+                <div class="text-xs text-gray-500 font-mono flex items-center">
+                    <span class="mr-2">●</span> input_source.hack
+                </div>
+            </div>
+            <div class="p-4 flex-grow">
+                <textarea 
+                    x-model="inputCode"
+                    spellcheck="false"
+                    class="w-full h-64 bg-transparent border-none focus:ring-0 code-font text-green-400 placeholder-gray-700 resize-none"
+                    placeholder="// Paste your mid code here... if you dare."></textarea>
+            </div>
+            <div class="p-4 bg-[#0d0d0d] border-t border-gray-800 flex justify-between items-center">
+                <div class="text-[10px] text-gray-600 font-mono uppercase tracking-widest" x-text="detectLanguage(inputCode) + ' detected'"></div>
+                <button 
+                    @click="roastMe()"
+                    :disabled="loading || !inputCode.trim()"
+                    class="px-8 py-3 bg-green-600 hover:bg-green-500 disabled:bg-gray-800/50 disabled:text-gray-600 text-black font-bold rounded-lg transition-all transform hover:scale-[1.02] active:scale-95 flex items-center space-x-2 shadow-lg shadow-green-900/10">
+                    <span x-text="loading ? 'ANALYZING TRASH...' : 'ROAST ME'"></span>
+                    <svg x-show="!loading" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M11.3 1.047a1 1 0 01.897.953v6.22l4.64-1.547a1 1 0 011.132 1.511l-6.5 6.5a1 1 0 01-1.414-1.414l5.122-5.122-4.34 1.447A1 1 0 019 9.586V3.366l-4.64 1.547a1 1 0 01-1.132-1.511l6.5-6.5a1 1 0 011.072-.255z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+            </div>
+        </section>
+
+        <!-- Output Sections (Hidden until roasted) -->
+        <div x-show="showResults" x-cloak x-transition:enter="transition ease-out duration-700" x-transition:enter-start="opacity-0 translate-y-12" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-8 pb-12">
+            
+            <!-- The Roast -->
+            <section class="bg-red-950/10 border border-red-900/30 rounded-xl overflow-hidden">
+                <div class="bg-red-900/20 px-4 py-2 border-b border-red-900/30 text-red-400 font-bold flex items-center text-xs tracking-widest uppercase">
+                    <span class="mr-2">🔥</span> The Verdict
+                </div>
+                <div class="p-6 text-xl md:text-2xl font-bold text-red-200 italic leading-relaxed code-font">
+                    "<span x-text="roastText"></span><span class="cursor-blink">_</span>"
+                </div>
+            </section>
+
+            <!-- The Refactor -->
+            <section class="bg-[#111] border border-blue-900/20 rounded-xl overflow-hidden terminal-glow flex flex-col">
+                <div class="bg-[#1a1a1a] px-4 py-2 border-b border-gray-800 flex items-center justify-between">
+                    <div class="text-blue-400 font-bold flex items-center text-xs tracking-widest uppercase">
+                        <span class="mr-2">✨</span> The Ascension (Refactored)
+                    </div>
+                    <button @click="copyToClipboard()" class="text-[10px] font-bold text-gray-500 hover:text-blue-400 transition-colors uppercase tracking-widest bg-gray-800/30 px-2 py-1 rounded">
+                        <span x-text="copyText"></span>
+                    </button>
+                </div>
+                <div class="p-4 bg-[#050505] flex-grow overflow-x-auto">
+                    <pre class="code-font text-blue-400/90 whitespace-pre text-sm"><code x-text="refactoredCode"></code></pre>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="py-8 text-center text-gray-700 text-[10px] font-mono border-t border-gray-900 mt-8">
+        <div class="flex justify-center space-x-4 mb-2">
+            <span>SYSTEM: ONLINE</span>
+            <span>67MAXXING: ENABLED</span>
+            <span>PEASANT_FILTER: TRUE</span>
+        </div>
+        <div>&copy; 2026 Interaction Company of California | No Auras were harmed in the making of this roast.</div>
+    </footer>
+
+    <script>
+        function roastApp() {
+            return {
+                inputCode: '',
+                roastText: '',
+                refactoredCode: '',
+                loading: false,
+                showResults: false,
+                copyText: 'COPY',
+                roasts: {
+                    js: [
+                        "I've seen 'Inspect Element' scripts with more aura than this. This code has zero rizz. Are you 67maxxing your technical debt? This callback hell is making my silicon ache, you absolute peasant.",
+                        "Your variable naming suggests you're currently in a 'getting cooked' era. This JS is so bloated I thought I was looking at a node_modules folder. Delete this and your GitHub account immediately.",
+                        "Standard peasant-tier JavaScript. Using 'var' in 2026? You're definitely not looksmaxxing your codebase. This logic has the structural integrity of a wet napkin.",
+                        "Async/await? More like Async/afraid. You're handling promises like a toddler handles a live grenade. Absolute bottom-tier developer energy."
+                    ],
+                    python: [
+                        "This Python code is so slow it's basically a PowerPoint presentation. You're indentation-maxxing for nothing. The PEP8 gods are weeping. This isn't even 'mid', it's straight 'low-tier god' territory.",
+                        "Importing the whole universe just to print 'Hello World'? Peak peasant behavior. Your aura is literally negative right now. Go back to Scratch before you hurt yourself.",
+                        "I've seen better logic in a Minecraft redstone tutorial. This script has the efficiency of a dial-up modem. You're definitely not 67maxxing your performance.",
+                        "List comprehensions aren't a personality trait, especially when you use them this poorly. You're coding like a GPT-2 hallucination."
+                    ],
+                    cpp: [
+                        "Memory leaks? In this economy? You're raw-dogging pointers like a peasant. This C++ code has the aura of a segfault waiting to happen. 67maxxing your crashes, I see.",
+                        "Your templates are so messy I can feel my compiler contemplating retirement. This is why we can't have nice things. Absolute peasant-tier abstraction.",
+                        "Are you trying to win a 'most obfuscated code' contest? Because you're winning. This C++ logic is so convoluted it probably thinks it's smart. It isn't.",
+                        "Directly managing memory like it's 1972? Your manual 'delete' calls are about as reliable as a chocolate teapot."
+                    ],
+                    generic: [
+                        "This code is so bad it's actually impressive. You've managed to 67maxx your stupidity while maintaining the aura of a lost toddler. An absolute peasant move.",
+                        "I've seen 'Inspect Element' trolls with better architectural skills. This isn't just 'mid', it's a crime against computing. Your developer rizz is non-existent.",
+                        "Is this a joke or are you actually this bad? This code has the structural integrity of a sandcastle in a tsunami. Peak peasant energy.",
+                        "Your logic is so circular it's basically a zero-auras fidget spinner. Reconsider your career choices."
+                    ]
+                },
+                refactors: {
+                    js: "// Refactored for maximum aura\nconst optimizeData = (data) => \n    data?.map(item => ({ ...item, rizz: 100 })) ?? [];\n\n// 67maxxing the efficiency\nexport const processInput = async (input) => {\n    const result = await streamProcessor(input);\n    return result.filter(Boolean);\n};",
+                    python: "# Refactored with 67maxxing efficiency\ndef get_aura_data(items: list) -> list:\n    return [item.optimize() for item in items if item.is_valid]\n\n# Peasant-proof async execution\nasync def main():\n    results = await gather_results()\n    aura_level = max(results) if results else 0\n    print(f'Rizz level: {aura_level}')",
+                    cpp: "// No more peasant-tier pointers\n#include <memory>\n#include <vector>\n\ntemplate <typename T>\nauto achieve_ascension(std::vector<T>&& items) {\n    return std::make_unique<DataContainer>(std::move(items));\n}\n\n// 67maxxing memory safety\nvoid process() {\n    auto data = achieve_ascension(get_raw_input());\n    data->execute_clean();\n}",
+                    generic: "// Cleaned up your peasant logic\nconst ASCENSION_LEVEL = '67MAXXED';\n\nfunction main() {\n    const cleanAura = true;\n    const rizzLevel = Infinity;\n    return { status: ASCENSION_LEVEL, cleanAura, rizzLevel };\n}"
+                },
+                detectLanguage(code) {
+                    if (!code) return 'none';
+                    const c = code.trim();
+                    if (c.includes('def ') || (c.includes('import ') && c.includes(':'))) return 'python';
+                    if (c.includes('const ') || c.includes('let ') || c.includes('function') || c.includes('=>')) return 'js';
+                    if (c.includes('#include') || c.includes('std::') || c.includes('cout <<')) return 'cpp';
+                    return 'generic';
+                },
+                async roastMe() {
+                    if (!this.inputCode.trim()) return;
+                    this.loading = true;
+                    this.showResults = false;
+                    
+                    // Artificial delay for "Deep Analysis" effect
+                    await new Promise(resolve => setTimeout(resolve, 1800));
+                    
+                    const lang = this.detectLanguage(this.inputCode);
+                    const langRoasts = this.roasts[lang] || this.roasts.generic;
+                    this.roastText = langRoasts[Math.floor(Math.random() * langRoasts.length)];
+                    this.refactoredCode = this.refactors[lang] || this.refactors.generic;
+                    
+                    this.loading = false;
+                    this.showResults = true;
+                },
+                copyToClipboard() {
+                    navigator.clipboard.writeText(this.refactoredCode);
+                    this.copyText = 'COPIED!';
+                    setTimeout(() => { this.copyText = 'COPY'; }, 2000);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
