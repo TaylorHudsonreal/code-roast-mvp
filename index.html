@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Code Roast & Re-Factor | v4.0 Tycoon Edition</title>
+    <title>Code Roast & Re-Factor | v4.2 Tycoon Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
@@ -52,8 +52,9 @@
         .premium-border {
             background: linear-gradient(45deg, #fbbf24, #f59e0b, #d97706);
             padding: 2px;
-            border-radius: 1rem;
+            border-radius: 1.5rem;
         }
+        .gold-glow { box-shadow: 0 0 40px rgba(251, 191, 36, 0.1); }
     </style>
 </head>
 <body 
@@ -64,84 +65,19 @@
     
     <div class="scanline fixed inset-0 z-[60] opacity-5 pointer-events-none"></div>
 
-    <!-- UI Overlay for Paywall -->
+    <!-- UI Overlay for Paywall Triggered -->
     <template x-if="showPaywall">
         <div class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
             <div @click.away="showPaywall = false" class="bg-[#111] border-2 border-amber-500/50 rounded-2xl p-8 max-w-md w-full terminal-glow relative overflow-hidden">
-                <div class="absolute -top-10 -right-10 w-32 h-32 bg-amber-500/10 rounded-full blur-3xl"></div>
-                <h2 class="text-3xl font-black text-amber-500 italic mb-2 tracking-tighter">PEASANT DETECTED</h2>
-                <p class="text-gray-400 text-sm mb-6 font-mono uppercase tracking-widest">Upgrade to <span class="text-white font-bold">Tycoon Pro</span> to unlock absolute god-tier logic.</p>
-                
-                <ul class="space-y-3 mb-8">
-                    <template x-for="benefit in benefits">
-                        <li class="flex items-center text-xs font-bold text-gray-300">
-                            <span class="text-amber-500 mr-2 text-lg">✦</span> <span x-text="benefit"></span>
-                        </li>
-                    </template>
-                </ul>
-
-                <div class="space-y-4">
-                    <button @click="showCheckout = true; showPaywall = false" class="w-full py-4 bg-amber-500 hover:bg-amber-400 text-black font-black rounded-xl transition-all transform hover:scale-[1.02] active:scale-95 shadow-xl shadow-amber-500/20 uppercase italic flex items-center justify-center">
-                        <span class="mr-2">⚡</span> Upgrade for $67.67/mo
-                    </button>
-                    <p class="text-[10px] text-gray-600 text-center font-mono uppercase tracking-widest italic">No shortcuts. No cheat codes. Real auras only.</p>
-                </div>
-                <button @click="showPaywall = false" class="mt-4 w-full text-[10px] text-gray-600 hover:text-white transition-colors uppercase font-mono tracking-widest">Stay a peasant for now</button>
+                <h2 class="text-3xl font-black text-amber-500 italic mb-2 tracking-tighter uppercase">Peasant Detected</h2>
+                <p class="text-gray-400 text-sm mb-6 font-mono uppercase tracking-widest">You need <span class="text-white font-bold">Tycoon Pro</span> to unlock this elite feature.</p>
+                <button @click="showPaywall = false; document.getElementById('pricing-section').scrollIntoView({behavior: 'smooth'})" class="w-full py-4 bg-amber-500 text-black font-black rounded-xl uppercase italic transform hover:scale-[1.02] transition-all">Go to Checkout</button>
+                <button @click="showPaywall = false" class="mt-4 w-full text-[10px] text-gray-600 hover:text-white transition-colors uppercase font-mono tracking-widest">I'll stay mid for now</button>
             </div>
         </div>
     </template>
 
-    <!-- Checkout Modal -->
-    <template x-if="showCheckout">
-        <div class="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/95 backdrop-blur-xl">
-            <div class="premium-border max-w-md w-full relative terminal-glow">
-                <div class="bg-[#0c0a09] rounded-[0.9rem] p-8 overflow-hidden relative">
-                    <div x-show="processing" class="absolute inset-0 z-10 bg-black/80 flex flex-col items-center justify-center">
-                        <div class="w-12 h-12 border-4 border-amber-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-                        <p class="text-amber-400 font-mono text-xs animate-pulse tracking-[0.3em]">INJECTING AURAS...</p>
-                    </div>
-
-                    <h3 class="text-2xl font-black text-amber-500 mb-6 font-mono uppercase tracking-widest italic flex items-center">
-                        <span class="mr-2 text-3xl">💳</span> TYCOON CHECKOUT
-                    </h3>
-                    
-                    <div class="space-y-6">
-                        <div class="p-4 bg-white/5 border border-white/10 rounded-xl flex justify-between items-center">
-                            <div>
-                                <p class="text-[9px] text-gray-500 uppercase font-bold tracking-widest">Subscription</p>
-                                <p class="text-sm text-white font-black">TYCOON PRO MONTHLY</p>
-                            </div>
-                            <p class="text-lg font-black text-amber-500">$67.67</p>
-                        </div>
-
-                        <div class="space-y-4">
-                            <div>
-                                <label class="text-[10px] text-amber-500/70 uppercase font-black mb-1 block tracking-widest">Peasant Card Number</label>
-                                <input type="text" placeholder="6767 6767 6767 6767" class="w-full bg-black/50 border border-amber-500/20 rounded-xl px-4 py-4 text-sm font-mono text-white focus:border-amber-500/50 outline-none transition-all placeholder:text-gray-800">
-                            </div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="text-[10px] text-amber-500/70 uppercase font-black mb-1 block tracking-widest">Aura CVV</label>
-                                    <input type="text" placeholder="670" class="w-full bg-black/50 border border-amber-500/20 rounded-xl px-4 py-4 text-sm font-mono text-white focus:border-amber-500/50 outline-none transition-all placeholder:text-gray-800">
-                                </div>
-                                <div>
-                                    <label class="text-[10px] text-amber-500/70 uppercase font-black mb-1 block tracking-widest">Expiry</label>
-                                    <input type="text" placeholder="06/67" class="w-full bg-black/50 border border-amber-500/20 rounded-xl px-4 py-4 text-sm font-mono text-white focus:border-amber-500/50 outline-none transition-all placeholder:text-gray-800">
-                                </div>
-                            </div>
-                        </div>
-
-                        <button @click="processPayment()" class="w-full py-5 bg-amber-500 hover:bg-amber-400 text-black font-black rounded-xl transition-all shadow-xl shadow-amber-500/20 mt-4 uppercase text-sm tracking-widest italic transform hover:scale-[1.02] active:scale-95">
-                            Authorize Ascension
-                        </button>
-                        <button @click="showCheckout = false" class="w-full py-2 text-[9px] text-gray-600 uppercase font-mono tracking-widest hover:text-white transition-colors">Cancel Payment</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </template>
-
-    <!-- Main App -->
+    <!-- Header -->
     <header class="max-w-5xl mx-auto w-full mb-8 flex flex-col items-center">
         <div class="flex items-center space-x-2 mb-4">
             <template x-for="t in ['Peasant Gray', 'Hacker Green', '67maxxing Gold']">
@@ -157,19 +93,19 @@
                 </button>
             </template>
         </div>
-        <h1 class="text-4xl md:text-7xl font-black text-white tracking-tighter mb-2 italic">
+        <h1 class="text-4xl md:text-7xl font-black text-white tracking-tighter mb-2 italic text-center">
             CODE <span :class="theme === '67maxxing Gold' ? 'text-amber-500' : 'text-[var(--accent-primary)]'">ROAST</span> & <span :class="theme === '67maxxing Gold' ? 'text-amber-400' : 'text-[var(--accent-secondary)]'">RE-FACTOR</span>
         </h1>
         <div x-show="pro" class="px-3 py-1 bg-amber-500 text-black text-[10px] font-black uppercase tracking-[0.4em] rounded-full mb-2 shadow-lg shadow-amber-500/20">Tycoon Pro Active</div>
         <p class="text-gray-600 uppercase tracking-[0.4em] text-[10px] font-black">Elevating logic since 2026</p>
     </header>
 
-    <main class="max-w-5xl mx-auto w-full grid grid-cols-1 gap-8 flex-grow">
+    <main class="max-w-5xl mx-auto w-full grid grid-cols-1 gap-12 flex-grow pb-24">
         <!-- Aura Meter -->
         <div class="bg-white/5 border border-white/5 rounded-3xl p-8 flex flex-col items-center terminal-glow backdrop-blur-sm">
             <div class="flex justify-between w-full text-[11px] font-black text-gray-500 mb-3 uppercase tracking-[0.2em]">
                 <span>Cooked (-1000)</span>
-                <span class="text-white">Current Aura: <span x-text="auraScore" :class="auraScore > 500 ? 'text-amber-500' : ''"></span></span>
+                <span class="text-white font-mono">Current Aura: <span x-text="auraScore" :class="auraScore > 500 ? 'text-amber-500' : ''"></span></span>
                 <span>Ascended (+1000)</span>
             </div>
             <div class="w-full h-5 bg-black rounded-full overflow-hidden border border-white/5 relative p-1">
@@ -179,19 +115,18 @@
                     <div class="absolute inset-0 scanline opacity-30"></div>
                 </div>
             </div>
-            <div x-show="auraScore > 500" class="mt-3 text-[10px] font-black text-amber-500 uppercase aura-animate tracking-widest italic">Ascension Imminent</div>
         </div>
 
-        <!-- Input Section -->
-        <section class="bg-[#111] border border-gray-800 rounded-2xl overflow-hidden terminal-glow flex flex-col">
+        <!-- Main Roaster Card -->
+        <section class="bg-[#111] border border-gray-800 rounded-3xl overflow-hidden terminal-glow flex flex-col">
             <div class="bg-[#1a1a1a] px-6 py-4 border-b border-gray-800 flex items-center justify-between">
                 <div class="flex space-x-2.5">
-                    <div @click="playBeep(440, 0.1)" class="w-3.5 h-3.5 rounded-full bg-red-500/80 cursor-pointer shadow-lg shadow-red-500/20"></div>
-                    <div @click="playBeep(550, 0.1)" class="w-3.5 h-3.5 rounded-full bg-yellow-500/80 cursor-pointer shadow-lg shadow-yellow-500/20"></div>
-                    <div @click="playBeep(660, 0.1)" class="w-3.5 h-3.5 rounded-full bg-green-500/80 cursor-pointer shadow-lg shadow-green-500/20"></div>
+                    <div class="w-3.5 h-3.5 rounded-full bg-red-500/80 shadow-lg shadow-red-500/20"></div>
+                    <div class="w-3.5 h-3.5 rounded-full bg-yellow-500/80 shadow-lg shadow-yellow-500/20"></div>
+                    <div class="w-3.5 h-3.5 rounded-full bg-green-500/80 shadow-lg shadow-green-500/20"></div>
                 </div>
                 <div class="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em] flex items-center">
-                    <span class="mr-2 text-green-500">●</span> main_source.hack
+                    <span class="mr-2 text-green-500">●</span> roaster_core.hack
                 </div>
             </div>
             
@@ -227,20 +162,16 @@
                     @click="roastMe()"
                     :disabled="loading"
                     class="px-12 py-5 bg-white hover:invert text-black font-black rounded-2xl transition-all transform hover:scale-[1.03] active:scale-95 flex items-center space-x-3 shadow-2xl shadow-white/5 uppercase text-sm italic tracking-tighter">
-                    <span x-text="loading ? 'Analyzing peasant logic...' : 'Roast Me'"></span>
+                    <span x-text="loading ? 'Analyzing...' : 'Roast Me'"></span>
                 </button>
             </div>
         </section>
 
-        <!-- Results -->
-        <div x-show="showResults" x-cloak x-transition class="space-y-8 pb-12">
-            <section class="bg-red-950/5 border border-red-900/20 rounded-2xl overflow-hidden">
-                <div class="bg-red-900/10 px-6 py-3 border-b border-red-900/20 text-red-500 font-black flex items-center text-[11px] tracking-widest uppercase italic">
-                    <span class="mr-2">🔥</span> The Verdict
-                </div>
-                <div class="p-10 text-xl md:text-4xl font-black text-white italic leading-tight code-font tracking-tight">
-                    "<span x-text="roastText"></span><span class="cursor-blink">_</span>"
-                </div>
+        <!-- Results Section -->
+        <div x-show="showResults" x-cloak x-transition class="space-y-8">
+            <section class="bg-red-950/5 border border-red-900/20 rounded-3xl overflow-hidden">
+                <div class="bg-red-900/10 px-6 py-3 border-b border-red-900/20 text-red-500 font-black text-[11px] tracking-widest uppercase italic">The Verdict</div>
+                <div class="p-10 text-xl md:text-4xl font-black text-white italic code-font">"<span x-text="roastText"></span>"</div>
                 <div class="px-10 pb-10 flex flex-wrap gap-3">
                     <template x-for="smell in detectedSmells">
                         <span class="px-3 py-1.5 bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-black uppercase tracking-widest rounded-lg" x-text="smell"></span>
@@ -248,24 +179,85 @@
                 </div>
             </section>
 
-            <section class="bg-[#111] border border-blue-900/20 rounded-2xl overflow-hidden flex flex-col terminal-glow">
-                <div class="bg-[#1a1a1a] px-6 py-3 border-b border-gray-800 flex items-center justify-between">
-                    <div class="text-blue-500 font-black flex items-center text-[11px] tracking-widest uppercase italic">
-                        <span class="mr-2 text-xl">✨</span> The Ascension
-                    </div>
-                    <div class="flex items-center space-x-3">
-                        <button @click="shareOnX()" class="text-[10px] font-black text-gray-500 hover:text-white transition-colors uppercase tracking-widest bg-white/5 px-3 py-2 rounded-xl border border-white/5">Flex on X</button>
-                        <button @click="copyToClipboard(refactoredCode)" class="text-[10px] font-black text-blue-500 hover:text-white transition-colors uppercase tracking-widest bg-blue-500/10 px-4 py-2 rounded-xl border border-blue-500/10">
-                            <span x-text="copyText">COPY</span>
-                        </button>
-                    </div>
+            <section class="bg-[#111] border border-blue-900/20 rounded-3xl overflow-hidden terminal-glow">
+                <div class="bg-[#1a1a1a] px-6 py-3 border-b border-gray-800 flex justify-between items-center">
+                    <div class="text-blue-500 font-black text-[11px] tracking-widest uppercase italic">The Ascension</div>
+                    <button @click="copyToClipboard(refactoredCode)" class="text-[10px] font-black text-blue-500 bg-blue-500/10 px-4 py-2 rounded-xl" x-text="copyText"></button>
                 </div>
-                <div class="p-8 bg-[#050505] flex-grow overflow-x-auto">
-                    <pre class="code-font text-blue-400 whitespace-pre text-base font-semibold leading-relaxed"><code x-text="refactoredCode"></code></pre>
+                <div class="p-8 bg-[#050505] overflow-x-auto">
+                    <pre class="code-font text-blue-400 text-base font-semibold"><code x-text="refactoredCode"></code></pre>
                 </div>
             </section>
         </div>
+
+        <!-- TYCOON PRO PRICING SECTION -->
+        <section id="pricing-section" class="mt-12" x-show="!pro" x-transition>
+            <div class="premium-border gold-glow">
+                <div class="bg-[#0c0a09] rounded-[1.4rem] p-8 md:p-12 relative overflow-hidden">
+                    <div class="absolute -top-24 -right-24 w-64 h-64 bg-amber-500/10 rounded-full blur-[100px]"></div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                        <div>
+                            <div class="inline-block px-4 py-1 bg-amber-500 text-black text-[10px] font-black uppercase tracking-[0.3em] rounded-full mb-6">Pro Access</div>
+                            <h2 class="text-4xl md:text-5xl font-black text-white mb-4 italic tracking-tighter">TYCOON PRO</h2>
+                            <p class="text-amber-500/80 font-mono text-sm uppercase tracking-widest mb-8">Stop coding like a peasant. Start ascending.</p>
+                            
+                            <ul class="space-y-4 mb-8">
+                                <template x-for="benefit in benefits">
+                                    <li class="flex items-center text-sm font-bold text-gray-300">
+                                        <span class="text-amber-500 mr-3 text-xl">✦</span> <span x-text="benefit"></span>
+                                    </li>
+                                </template>
+                            </ul>
+                            
+                            <div class="flex items-baseline space-x-2">
+                                <span class="text-5xl font-black text-white italic">$67.67</span>
+                                <span class="text-gray-600 font-mono text-sm uppercase">/ Monthly</span>
+                            </div>
+                        </div>
+
+                        <!-- Checkout Form Integrated -->
+                        <div class="bg-black/40 border border-white/5 rounded-2xl p-6 md:p-8 backdrop-blur-sm relative">
+                            <div x-show="processing" class="absolute inset-0 z-10 bg-black/80 flex flex-col items-center justify-center rounded-2xl">
+                                <div class="w-10 h-10 border-4 border-amber-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+                                <p class="text-amber-500 font-mono text-[10px] animate-pulse tracking-widest uppercase">Authorizing Ascension...</p>
+                            </div>
+
+                            <div class="space-y-6">
+                                <h3 class="text-xs font-black text-gray-500 uppercase tracking-[0.3em] border-b border-white/5 pb-4">Secure Checkout</h3>
+                                
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="text-[9px] text-amber-500/50 uppercase font-black mb-1.5 block tracking-widest">Card Number</label>
+                                        <input type="text" placeholder="6767 6767 6767 6767" class="w-full bg-black border border-white/10 rounded-xl px-4 py-3.5 text-sm font-mono text-white focus:border-amber-500/50 outline-none transition-all placeholder:text-gray-800">
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="text-[9px] text-amber-500/50 uppercase font-black mb-1.5 block tracking-widest">Aura CVV</label>
+                                            <input type="text" placeholder="670" class="w-full bg-black border border-white/10 rounded-xl px-4 py-3.5 text-sm font-mono text-white focus:border-amber-500/50 outline-none transition-all placeholder:text-gray-800">
+                                        </div>
+                                        <div>
+                                            <label class="text-[9px] text-amber-500/50 uppercase font-black mb-1.5 block tracking-widest">Expiry</label>
+                                            <input type="text" placeholder="06/67" class="w-full bg-black border border-white/10 rounded-xl px-4 py-3.5 text-sm font-mono text-white focus:border-amber-500/50 outline-none transition-all placeholder:text-gray-800">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button @click="processPayment()" class="w-full py-5 bg-amber-500 hover:bg-amber-400 text-black font-black rounded-xl transition-all shadow-xl shadow-amber-500/20 uppercase text-sm tracking-widest italic transform hover:scale-[1.02] active:scale-95">
+                                    Purchase Tycoon Pro
+                                </button>
+                                <p class="text-[8px] text-gray-700 text-center font-mono uppercase tracking-widest">Encoded with 256-bit high-aura encryption</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
+
+    <footer class="py-12 border-t border-white/5 mt-12 text-center">
+        <p class="text-[10px] text-gray-700 font-black uppercase tracking-[0.5em]">&copy; 2026 Interaction Company of California | No Shortcuts. Just Auras.</p>
+    </footer>
 
     <script>
         function roastApp() {
@@ -283,7 +275,6 @@
                 detectedSmells: [],
                 pro: false,
                 showPaywall: false,
-                showCheckout: false,
                 processing: false,
                 benefits: [
                     "Zero aura loss on bad roasts",
@@ -341,26 +332,22 @@
                     this.playBeep(330, 0.5, 'square');
                     setTimeout(() => {
                         this.processing = false;
-                        this.showCheckout = false;
                         this.pro = true;
                         this.playBeep(1320, 0.3);
-                        alert("PAYMENT PROCESSED. WELCOME TO THE ELITE, TYCOON.");
+                        window.scrollTo({top: 0, behavior: 'smooth'});
                     }, 2800);
                 },
 
                 analyzeCode(code) {
                     const smells = [];
                     let score = 200;
-
                     if (code.includes('var ')) { smells.push('ANCIENT VAR USAGE'); score -= 250; }
                     if (code.includes('print ') && !code.includes('print(')) { smells.push('PYTHON 2 LEGACY'); score -= 300; }
                     if ((code.match(/for /g) || []).length > 2) { smells.push('NESTED LOOP HELL'); score -= 150; }
                     if (code.includes('while(true)') || code.includes('while (true)')) { smells.push('INFINITE LOOP RISK'); score -= 400; }
                     if (code.length > 500 && !code.includes('//') && !code.includes('#')) { smells.push('ZERO DOCUMENTATION'); score -= 200; }
-                    
                     const badVars = [' x ', ' y ', ' temp ', ' data '];
                     badVars.forEach(v => { if (code.includes(v)) { smells.push('LAZY NAMING: ' + v.trim()); score -= 80; } });
-
                     this.detectedSmells = smells;
                     return score;
                 },
@@ -371,36 +358,24 @@
                         this.playBeep(150, 0.5, 'sawtooth');
                         return;
                     }
-
                     this.loading = true;
                     this.error = '';
                     this.showResults = false;
-                    
                     const scanScore = this.analyzeCode(this.inputCode);
                     this.auraScore = scanScore;
-
                     await new Promise(resolve => setTimeout(resolve, 2200));
-                    
                     this.roastText = this.generateRoast(scanScore);
                     this.refactoredCode = "// Refactored with high-aura logic\n" + (this.inputCode.includes('def') ? "def optimize(): return 'Ascended'" : "const optimize = () => 'Ascended';");
-                    
                     this.loading = false;
                     this.showResults = true;
                     this.playBeep(880, 0.2);
                 },
 
                 generateRoast(score) {
-                    if (this.mode === 'Mild') return "It's acceptable, but your aura is flickering. Try harder, peasant.";
-                    if (this.mode === '67maxxing') return "This logic is so high-tier it's actually making my GPU sweat. Absolute god-king behavior.";
-                    
-                    if (score < 0) return "This code is a literal biohazard. My sensors are detecting trace amounts of 'unemployed' energy.";
-                    if (this.detectedSmells.length > 2) return `You've got more smells than a garbage truck. ${this.detectedSmells[0]}? Really?`;
+                    if (this.mode === 'Mild') return "Acceptable, but your aura is flickering. Try harder.";
+                    if (this.mode === '67maxxing') return "This logic is so high-tier it's actually making my GPU sweat.";
+                    if (score < 0) return "This code is a literal biohazard. Unemployed energy detected.";
                     return "Standard peasant logic. It runs, but so does a blender full of rocks.";
-                },
-
-                shareOnX() {
-                    const text = encodeURIComponent(`My code aura is ${this.auraScore} on Code Roast & Re-Factor! 67maxxing my career logic. #CodeRoast #HighAura #TycoonPro`);
-                    window.open(`https://twitter.com/intent/tweet?text=${text}`);
                 },
 
                 copyToClipboard(text) {
