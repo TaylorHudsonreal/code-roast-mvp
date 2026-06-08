@@ -1,36 +1,34 @@
-# 🔥 Code Roast & Re-Factor v2.0
+# 🔥 CODE ROAST & RE-FACTOR v3.0
 
-An elitist, terminal-themed MVP for roasting "peasant-tier" code and providing high-aura refactors. Built for developers who want to 67maxx their technical debt and improve their developer rizz.
+The ultimate high-aura developer tool for judging logic, roasting "peasant-tier" code, and achieving total technical ascension. Version 3.0 introduces deep heuristics and sensory feedback for the ultimate judging experience.
 
-## ✨ New in v2.0
+## 🚀 Legendary New Features (v3.0)
 
-- **Selectable Roast Modes**: Choose your level of pain:
-  - `Mild`: For sensitive peasants.
-  - `Brutal`: Standard industry-grade roasting.
-  - `67maxxing`: Maximum aura damage.
-- **Roast History**: Automatically saves your last 10 roasts to `localStorage` for future reflection on your failures.
-- **Improved Clipboard Support**: One-click "Ascension" copying.
-- **Robust Error Handling**: Real-time validation for empty inputs and simulated engine failures.
+- **🧠 Real-Time Code Heuristics**: A built-in scanner detects actual code smells—like legacy `var` usage, Python 2 syntax, nested loop hell, and bad naming conventions—dynamically tailoring the roast to your specific failures.
+- **📊 Animated Aura Meter**: Watch your "Code Aura" score climb or drain in real-time. Range from -1000 (Cooked) to +1000 (Ascended).
+- **🎹 Retro Synth Sound Engine**: Powered by the **Web Audio API**. Toggle clicky terminal sounds, error bleeps, and success chimes without any external assets.
+- **🎨 Elite Theme Engine**: Switch between multiple aesthetic modes:
+  - `Peasant Gray`: The default experience.
+  - `Hacker Green`: For that high-contrast terminal vibe.
+  - `67maxxing Gold`: For the truly ascended developers.
+- **🐦 Flex on X**: Instant share card generator to brag about your Aura score on Twitter/X.
+- **✨ The Ascension**: Refined refactoring engine providing high-efficiency alternatives to your mid-tier logic.
 
-## 🚀 Deployment
+## 🛠 Tech Stack
 
-This project is configured for seamless deployment on **Vercel**.
+- **Frontend**: Tailwind CSS & Alpine.js
+- **Audio**: Web Audio API (Synthesized oscillators)
+- **Deployment**: Vercel-ready single-file architecture
 
-### How to Deploy
-1. **Vercel CLI**:
+## 📦 Installation & Deployment
+
+1. **Clone & Open**: Simply open `index.html` in any modern browser.
+2. **Deploy to Vercel**: 
    ```bash
    cd code-roast-mvp
    vercel
    ```
-2. **GitHub Integration**:
-   Push this folder to a GitHub repository and link it to your Vercel account.
-
-## 🛠 Tech Stack
-
-- **Styling**: Tailwind CSS
-- **Interactivity**: Alpine.js
-- **State**: LocalStorage API
-- **Typography**: Inter & Fira Code
+   *Note: `vercel.json` is included for automatic routing.*
 
 ---
-&copy; 2026 Interaction Company of California. *Elevating logic, one roast at a time.*
+&copy; 2026 Interaction Company of California | *67maxxing the world's codebases.*

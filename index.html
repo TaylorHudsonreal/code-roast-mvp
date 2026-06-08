@@ -3,85 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Code Roast & Re-Factor | MVP v2.0</title>
+    <title>CODE ROAST & RE-FACTOR | v3.0 Ultra High-Aura</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
         [x-cloak] { display: none !important; }
+        
+        /* Themes */
+        .theme-peasant { --bg: #0a0a0a; --accent: #22c55e; --text: #d1d5db; --panel: #111; --border: #1f2937; }
+        .theme-hacker { --bg: #000; --accent: #00ff41; --text: #00ff41; --panel: #050505; --border: #003b00; }
+        .theme-gold { --bg: #0a0500; --accent: #fbbf24; --text: #fef3c7; --panel: #1a1000; --border: #451a03; }
+
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #0a0a0a;
-            color: #d1d5db;
+            background-color: var(--bg);
+            color: var(--text);
+            transition: all 0.5s ease;
         }
-        .code-font {
-            font-family: 'Fira Code', monospace;
-        }
-        .terminal-glow {
-            box-shadow: 0 0 20px rgba(34, 197, 94, 0.05);
-        }
+        .code-font { font-family: 'Fira Code', monospace; }
+        .accent-text { color: var(--accent); }
+        .accent-bg { background-color: var(--accent); }
+        .accent-border { border-color: var(--accent); }
+        .panel { background-color: var(--panel); border: 1px solid var(--border); }
+        
+        .terminal-glow { box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); }
+        .theme-hacker .terminal-glow { box-shadow: 0 0 20px rgba(0, 255, 65, 0.1); }
+        .theme-gold .terminal-glow { box-shadow: 0 0 20px rgba(251, 191, 36, 0.1); }
+
         .scanline {
-            background: linear-gradient(
-                to bottom,
-                rgba(18, 16, 16, 0) 50%,
-                rgba(0, 0, 0, 0.1) 50%
-            );
+            background: linear-gradient(to bottom, rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
             background-size: 100% 4px;
             pointer-events: none;
         }
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
-        .cursor-blink {
-            animation: blink 1s infinite;
-        }
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0a0a0a;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #222;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #333;
-        }
+
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        .cursor-blink { animation: blink 1s infinite; }
+        
+        .aura-bar-fill { transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: #222; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #333; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col p-4 md:p-8 selection:bg-green-500/30" x-data="roastApp()" x-init="init()">
+<body :class="'theme-' + theme" class="min-h-screen flex flex-col p-4 md:p-8 selection:bg-white/10" x-data="roastApp()" x-init="init()">
     <div class="scanline fixed inset-0 z-50 opacity-10 pointer-events-none"></div>
 
-    <header class="max-w-5xl mx-auto w-full mb-8 text-center">
-        <h1 class="text-4xl md:text-6xl font-extrabold text-white tracking-tight mb-2">
-            CODE <span class="text-green-500">ROAST</span> & <span class="text-blue-500">RE-FACTOR</span>
+    <header class="max-w-5xl mx-auto w-full mb-8 flex flex-col items-center">
+        <div class="flex justify-between w-full items-center mb-4">
+            <div class="flex space-x-2">
+                <button @click="toggleSound()" class="p-2 panel rounded-lg hover:accent-text transition-colors">
+                    <span x-text="soundEnabled ? '🔊' : '🔇'"></span>
+                </button>
+                <div class="flex panel rounded-lg p-1 space-x-1">
+                    <template x-for="t in ['peasant', 'hacker', 'gold']">
+                        <button @click="setTheme(t)" :class="theme === t ? 'accent-bg text-black' : 'hover:accent-text'" 
+                                class="px-2 py-1 text-[10px] uppercase font-bold rounded transition-all" x-text="t"></button>
+                    </template>
+                </div>
+            </div>
+            <div class="text-[10px] font-mono opacity-50 uppercase tracking-widest">v3.0 Ultra-High Aura</div>
+        </div>
+
+        <h1 class="text-4xl md:text-6xl font-extrabold text-white tracking-tight mb-2 text-center">
+            CODE <span class="accent-text">ROAST</span> & <span class="text-blue-500">RE-FACTOR</span>
         </h1>
-        <p class="text-gray-500 uppercase tracking-widest text-sm font-semibold">Elevating your peasant-tier logic since 2026</p>
+        <p class="text-gray-500 uppercase tracking-widest text-sm font-semibold">Elevating peasant-tier logic since 2026</p>
     </header>
 
     <main class="max-w-5xl mx-auto w-full grid grid-cols-1 gap-8 flex-grow">
+        <!-- Aura Meter -->
+        <section class="panel rounded-xl p-6 terminal-glow overflow-hidden relative">
+            <div class="flex justify-between items-end mb-2">
+                <span class="text-xs font-bold uppercase tracking-widest">Aura Level</span>
+                <span class="text-2xl font-black code-font accent-text" x-text="auraScore"></span>
+            </div>
+            <div class="h-4 w-full bg-black/50 rounded-full border border-white/5 overflow-hidden">
+                <div class="h-full aura-bar-fill relative" 
+                     :style="'width: ' + ((auraScore + 1000) / 20) + '%; background-color: ' + getAuraColor()">
+                    <div class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 animate-pulse"></div>
+                </div>
+            </div>
+            <div class="flex justify-between mt-1 text-[9px] uppercase tracking-tighter opacity-50 font-mono">
+                <span>-1000 Cooked</span>
+                <span>0 Mid</span>
+                <span>+1000 Ascended</span>
+            </div>
+        </section>
+
         <!-- Input Section -->
-        <section class="bg-[#111] border border-gray-800 rounded-xl overflow-hidden terminal-glow flex flex-col">
-            <div class="bg-[#1a1a1a] px-4 py-2 border-b border-gray-800 flex items-center justify-between">
+        <section class="panel rounded-xl overflow-hidden terminal-glow flex flex-col">
+            <div class="bg-black/20 px-4 py-2 border-b border-white/5 flex items-center justify-between">
                 <div class="flex space-x-2">
                     <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
                     <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
                     <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
                 </div>
-                <div class="text-xs text-gray-500 font-mono flex items-center">
-                    <span class="mr-2">●</span> input_source.hack
+                <div class="text-[10px] font-mono opacity-50 flex items-center">
+                    <span class="mr-2">●</span> main.peasant
                 </div>
             </div>
             
-            <div class="p-4 flex-grow bg-[#0d0d0d]">
+            <div class="p-4 flex-grow bg-black/10">
                 <textarea 
                     x-model="inputCode"
                     spellcheck="false"
-                    @input="error = ''"
-                    class="w-full h-64 bg-transparent border-none focus:ring-0 code-font text-green-400 placeholder-gray-700 resize-none"
-                    placeholder="// Paste your mid code here... if you dare."></textarea>
+                    @input="onInput()"
+                    class="w-full h-64 bg-transparent border-none focus:ring-0 code-font accent-text placeholder-white/5 resize-none"
+                    placeholder="// Paste your code here to be judged."></textarea>
                 
                 <template x-if="error">
                     <div class="text-red-500 text-xs font-mono mt-2 flex items-center">
@@ -90,82 +121,76 @@
                 </template>
             </div>
 
-            <div class="p-4 bg-[#111] border-t border-gray-800 flex flex-wrap gap-4 justify-between items-center">
-                <div class="flex items-center space-x-2 bg-[#0a0a0a] p-1 rounded-lg border border-gray-800">
+            <div class="p-4 bg-black/20 border-t border-white/5 flex flex-wrap gap-4 justify-between items-center">
+                <div class="flex items-center space-x-2 bg-black/50 p-1 rounded-lg">
                     <template x-for="m in ['Mild', 'Brutal', '67maxxing']">
                         <button 
-                            @click="mode = m"
-                            :class="mode === m ? 'bg-green-600 text-black font-bold' : 'text-gray-500 hover:text-gray-300'"
+                            @click="mode = m; playClick();"
+                            :class="mode === m ? 'accent-bg text-black font-bold' : 'opacity-40 hover:opacity-100'"
                             class="px-3 py-1 rounded text-[10px] uppercase tracking-tighter transition-all"
                             x-text="m"></button>
                     </template>
                 </div>
 
                 <div class="flex items-center space-x-4">
-                    <div class="text-[10px] text-gray-600 font-mono uppercase tracking-widest hidden sm:block" x-text="detectLanguage(inputCode) + ' detected'"></div>
+                    <div class="text-[10px] font-mono uppercase tracking-widest hidden sm:block opacity-40" 
+                         x-text="lang + ' detected'"></div>
                     <button 
                         @click="roastMe()"
                         :disabled="loading"
-                        class="px-8 py-3 bg-green-600 hover:bg-green-500 disabled:bg-gray-800/50 disabled:text-gray-600 text-black font-bold rounded-lg transition-all transform hover:scale-[1.02] active:scale-95 flex items-center space-x-2 shadow-lg shadow-green-900/10">
-                        <span x-text="loading ? 'ANALYZING TRASH...' : 'ROAST ME'"></span>
+                        class="px-8 py-3 accent-bg hover:opacity-90 disabled:opacity-20 text-black font-bold rounded-lg transition-all transform hover:scale-[1.02] active:scale-95 flex items-center space-x-2">
+                        <span x-text="loading ? 'SCANNING SMELLS...' : 'JUDGE CODE'"></span>
                     </button>
                 </div>
             </div>
         </section>
 
-        <!-- Output Sections -->
+        <!-- Results -->
         <div x-show="showResults" x-cloak x-transition class="space-y-8 pb-12">
+            <!-- Heuristics Breakdown -->
+            <section class="panel rounded-xl p-4 bg-black/5 flex flex-wrap gap-2" x-show="smells.length > 0">
+                <template x-for="smell in smells">
+                    <span class="px-2 py-1 rounded bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] font-mono" x-text="smell"></span>
+                </template>
+            </section>
+
             <!-- The Roast -->
-            <section class="bg-red-950/10 border border-red-900/30 rounded-xl overflow-hidden">
-                <div class="bg-red-900/20 px-4 py-2 border-b border-red-900/30 text-red-400 font-bold flex items-center text-xs tracking-widest uppercase">
-                    <span class="mr-2">🔥</span> The Verdict (<span x-text="mode"></span>)
+            <section class="bg-red-500/5 border border-red-500/20 rounded-xl overflow-hidden">
+                <div class="bg-red-500/10 px-4 py-2 border-b border-red-500/20 text-red-500 font-bold flex items-center text-xs tracking-widest uppercase">
+                    <span class="mr-2">🔥</span> The Verdict
                 </div>
-                <div class="p-6 text-xl md:text-2xl font-bold text-red-200 italic leading-relaxed code-font">
+                <div class="p-6 text-xl md:text-2xl font-bold text-red-200/90 italic leading-relaxed code-font">
                     "<span x-text="roastText"></span><span class="cursor-blink">_</span>"
+                </div>
+                <div class="px-6 pb-6 flex space-x-4">
+                    <button @click="shareOnX()" class="text-[10px] accent-text hover:underline uppercase font-bold tracking-widest">Share Aura score on X</button>
                 </div>
             </section>
 
             <!-- The Refactor -->
-            <section class="bg-[#111] border border-blue-900/20 rounded-xl overflow-hidden terminal-glow flex flex-col">
-                <div class="bg-[#1a1a1a] px-4 py-2 border-b border-gray-800 flex items-center justify-between">
+            <section class="panel rounded-xl overflow-hidden terminal-glow flex flex-col">
+                <div class="bg-black/20 px-4 py-2 border-b border-white/5 flex items-center justify-between">
                     <div class="text-blue-400 font-bold flex items-center text-xs tracking-widest uppercase">
-                        <span class="mr-2">✨</span> The Ascension (Refactored)
+                        <span class="mr-2">✨</span> The Ascension
                     </div>
-                    <button @click="copyToClipboard(refactoredCode)" class="text-[10px] font-bold text-gray-500 hover:text-blue-400 transition-colors uppercase tracking-widest bg-gray-800/30 px-2 py-1 rounded">
+                    <button @click="copyToClipboard(refactoredCode)" class="text-[10px] font-bold opacity-50 hover:opacity-100 transition-colors uppercase tracking-widest bg-white/5 px-2 py-1 rounded">
                         <span x-text="copyText">COPY</span>
                     </button>
                 </div>
-                <div class="p-4 bg-[#050505] flex-grow overflow-x-auto">
+                <div class="p-4 bg-black/40 flex-grow overflow-x-auto">
                     <pre class="code-font text-blue-400/90 whitespace-pre text-sm"><code x-text="refactoredCode"></code></pre>
                 </div>
             </section>
         </div>
-
-        <!-- History -->
-        <section x-show="history.length > 0" x-cloak class="mt-8 border-t border-gray-900 pt-8">
-            <h3 class="text-xs font-bold text-gray-600 uppercase tracking-[0.2em] mb-4">Roast History</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <template x-for="(item, index) in history" :key="index">
-                    <div @click="loadFromHistory(item)" class="bg-[#111] border border-gray-800 p-4 rounded-lg cursor-pointer hover:border-gray-600 transition-all group">
-                        <div class="flex justify-between items-start mb-2">
-                            <span class="text-[10px] text-green-500 font-mono" x-text="item.lang"></span>
-                            <span class="text-[9px] text-gray-700" x-text="item.date"></span>
-                        </div>
-                        <p class="text-xs text-gray-400 line-clamp-2 italic" x-text="item.roast"></p>
-                    </div>
-                </template>
-            </div>
-            <button @click="clearHistory()" class="mt-4 text-[9px] text-gray-700 hover:text-red-900 uppercase tracking-widest transition-colors">Clear Records</button>
-        </section>
     </main>
 
-    <footer class="py-8 text-center text-gray-700 text-[10px] font-mono border-t border-gray-900 mt-8">
+    <footer class="py-8 text-center opacity-30 text-[10px] font-mono border-t border-white/5 mt-8">
         <div class="flex justify-center space-x-4 mb-2">
-            <span>SYSTEM: ONLINE</span>
-            <span>67MAXXING: ENABLED</span>
-            <span>PEASANT_FILTER: TRUE</span>
+            <span>AUDIT: COMPLETE</span>
+            <span>67MAXXING: ACTIVE</span>
+            <span>PEASANT_MODE: FILTERED</span>
         </div>
-        <div>&copy; 2026 Interaction Company of California | Elevating auras worldwide.</div>
+        <div>&copy; 2026 Interaction Company of California | No AI was harmed in this roasting.</div>
     </footer>
 
     <script>
@@ -178,107 +203,137 @@
                 showResults: false,
                 copyText: 'COPY',
                 mode: 'Brutal',
+                theme: 'peasant',
                 error: '',
-                history: [],
+                auraScore: 0,
+                lang: 'none',
+                smells: [],
+                soundEnabled: false,
+                audioCtx: null,
                 
                 init() {
-                    const saved = localStorage.getItem('roast_history');
-                    if (saved) this.history = JSON.parse(saved);
+                    const saved = localStorage.getItem('roast_theme');
+                    if (saved) this.theme = saved;
                 },
 
-                roasts: {
-                    js: {
-                        Mild: ["This logic is a bit 'mid'. You're using 'var'? That's a classic peasant move, but we can fix it.", "Not bad, but your code has the aura of a junior dev on their first day."],
-                        Brutal: ["I've seen 'Inspect Element' scripts with more rizz. This callback hell is making my silicon ache.", "Your variable naming suggests you're currently in a 'getting cooked' era. Absolute trash."],
-                        '67maxxing': ["You're 67maxxing your technical debt. This code has zero developer rizz. Delete your account.", "Your technical aura is literally negative. This JS is so bloated I thought it was node_modules."]
-                    },
-                    python: {
-                        Mild: ["Pythonic? Barely. It works, but the PEP8 gods aren't smiling.", "A bit slow, like a PowerPoint presentation. Let's speed it up."],
-                        Brutal: ["This Python code is straight 'low-tier god' territory. Peak peasant behavior.", "I've seen better logic in a Minecraft redstone tutorial. You're indentation-maxxing for nothing."],
-                        '67maxxing': ["Your performance is the opposite of 67maxxing. This script has the efficiency of a dial-up modem.", "Negative aura detected. You're coding like a GPT-2 hallucination."]
-                    },
-                    generic: {
-                        Mild: ["This works, but it's not 'high-aura' material. Let's polish it.", "Average peasant logic. Acceptable, but we can do better."],
-                        Brutal: ["This code is so bad it's actually impressive. A crime against computing.", "Your developer rizz is non-existent. This logic is a circular zero-auras fidget spinner."],
-                        '67maxxing': ["Peak peasant energy. You've managed to 67maxx your stupidity.", "Absolute bottom-tier developer energy. Reconsider your life choices."]
+                setTheme(t) {
+                    this.theme = t;
+                    localStorage.setItem('roast_theme', t);
+                    this.playClick();
+                },
+
+                toggleSound() {
+                    this.soundEnabled = !this.soundEnabled;
+                    if (this.soundEnabled && !this.audioCtx) {
+                        this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                     }
+                    this.playClick();
                 },
 
-                refactors: {
-                    js: "// Ascended JS\nconst process = (data) => data?.map(d => ({ ...d, rizz: 100 })) ?? [];",
-                    python: "# 67maxxing efficiency\ndef get_aura(items: list) -> list:\n    return [i.optimize() for i in items if i.is_valid]",
-                    generic: "// Cleaned up your logic\nfunction main() {\n  return { aura: 'MAX', rizz: Infinity };\n}"
+                playOsc(freq, type, duration, vol) {
+                    if (!this.soundEnabled || !this.audioCtx) return;
+                    const osc = this.audioCtx.createOscillator();
+                    const gain = this.audioCtx.createGain();
+                    osc.type = type;
+                    osc.frequency.setValueAtTime(freq, this.audioCtx.currentTime);
+                    gain.gain.setValueAtTime(vol, this.audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, this.audioCtx.currentTime + duration);
+                    osc.connect(gain);
+                    gain.connect(this.audioCtx.destination);
+                    osc.start();
+                    osc.stop(this.audioCtx.currentTime + duration);
+                },
+
+                playClick() { this.playOsc(800, 'sine', 0.05, 0.1); },
+                playError() { this.playOsc(150, 'sawtooth', 0.3, 0.1); },
+                playSuccess() { 
+                    this.playOsc(400, 'sine', 0.1, 0.1);
+                    setTimeout(() => this.playOsc(600, 'sine', 0.2, 0.1), 100);
+                },
+
+                onInput() {
+                    this.error = '';
+                    this.lang = this.detectLanguage(this.inputCode);
+                    this.playClick();
+                },
+
+                getAuraColor() {
+                    if (this.auraScore < -500) return '#ef4444';
+                    if (this.auraScore < 0) return '#f97316';
+                    if (this.auraScore < 500) return '#22c55e';
+                    return '#fbbf24';
                 },
 
                 detectLanguage(code) {
-                    if (!code) return 'none';
                     const c = code.trim();
                     if (c.includes('def ') || (c.includes('import ') && c.includes(':'))) return 'python';
                     if (c.includes('const ') || c.includes('let ') || c.includes('function') || c.includes('=>')) return 'js';
                     return 'generic';
                 },
 
+                scanHeuristics(code) {
+                    const smells = [];
+                    let penalty = 0;
+
+                    if (code.includes('var ')) { smells.push('Legacy "var" usage'); penalty += 150; }
+                    if (code.match(/print\s+['"]/)) { smells.push('Python 2 print syntax'); penalty += 200; }
+                    if ((code.match(/for/g) || []).length > 2) { smells.push('Nested loop hell'); penalty += 100; }
+                    if (code.match(/\b(x|y|temp|data|val)\b/)) { smells.push('Peasant-tier naming (x/y/temp)'); penalty += 50; }
+                    if (!code.includes('//') && !code.includes('#')) { smells.push('Zero documentation aura'); penalty += 80; }
+                    if (code.includes('while(true)') || code.includes('while (true)')) { smells.push('Infinite loop danger'); penalty += 300; }
+                    if (code.length > 500 && (code.match(/\n/g) || []).length < 5) { smells.push('Wall of code syndrome'); penalty += 120; }
+
+                    this.smells = smells;
+                    return penalty;
+                },
+
                 async roastMe() {
                     if (!this.inputCode.trim()) {
-                        this.error = "ERROR: Cannot roast empty logic. Paste some trash first.";
+                        this.error = "JUDGEMENT FAILED: Input is empty.";
+                        this.playError();
                         return;
                     }
 
                     this.loading = true;
-                    this.error = '';
                     this.showResults = false;
                     
-                    try {
-                        await new Promise(resolve => setTimeout(resolve, 1500));
-                        
-                        const lang = this.detectLanguage(this.inputCode);
-                        const options = this.roasts[lang] || this.roasts.generic;
-                        const modeRoasts = options[this.mode];
-                        
-                        this.roastText = modeRoasts[Math.floor(Math.random() * modeRoasts.length)];
-                        this.refactoredCode = this.refactors[lang] || this.refactors.generic;
-                        
-                        this.saveToHistory(lang);
-                        this.showResults = true;
-                    } catch (e) {
-                        this.error = "CRITICAL SYSTEM FAILURE: Peasant logic broke the roast engine.";
-                    } finally {
-                        this.loading = false;
-                    }
-                },
+                    const penalty = this.scanHeuristics(this.inputCode);
+                    const baseAura = 200;
+                    this.auraScore = baseAura - penalty - (this.mode === '67maxxing' ? 300 : this.mode === 'Brutal' ? 150 : 0);
+                    
+                    await new Promise(resolve => setTimeout(resolve, 2000));
 
-                saveToHistory(lang) {
-                    const entry = {
-                        code: this.inputCode,
-                        roast: this.roastText,
-                        refactor: this.refactoredCode,
-                        lang: lang,
-                        date: new Date().toLocaleTimeString(),
-                        mode: this.mode
+                    const langRoasts = {
+                        js: ["Your JS has the aura of a node_modules folder - bloated and full of vulnerabilities.", "Using 'var' in 2026? You're literally looksmaxxing your technical debt.", "This callback hell is why your technical aura is negative."],
+                        python: ["Your Python code is so slow it's basically a slideshow.", "PEP8 called, they want their sanity back.", "This isn't Pythonic, it's Py-pathetic."],
+                        generic: ["This code is mid-tier at best. Zero developer rizz detected.", "A crime against computing. Your aura is draining as we speak.", "Absolute peasant move. Reconsider your career."]
                     };
-                    this.history.unshift(entry);
-                    this.history = this.history.slice(0, 10);
-                    localStorage.setItem('roast_history', JSON.stringify(this.history));
-                },
 
-                loadFromHistory(item) {
-                    this.inputCode = item.code;
-                    this.roastText = item.roast;
-                    this.refactoredCode = item.refactor;
-                    this.mode = item.mode;
+                    const selected = langRoasts[this.lang] || langRoasts.generic;
+                    let baseRoast = selected[Math.floor(Math.random() * selected.length)];
+                    
+                    if (this.smells.length > 0) {
+                        baseRoast += ` Specifically, that ${this.smells[0]} is absolute trash.`;
+                    }
+
+                    this.roastText = baseRoast;
+                    this.refactoredCode = "// Ascended Refactor\n" + (this.lang === 'python' ? "def process(items):\n    return [i.optimize() for i in items if i.is_valid]" : "const process = (items) => items?.filter(Boolean).map(i => ({ ...i, aura: 9999 }));");
+
+                    this.loading = false;
                     this.showResults = true;
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                },
-
-                clearHistory() {
-                    this.history = [];
-                    localStorage.removeItem('roast_history');
+                    this.playSuccess();
                 },
 
                 copyToClipboard(text) {
                     navigator.clipboard.writeText(text);
                     this.copyText = 'COPIED!';
+                    this.playClick();
                     setTimeout(() => { this.copyText = 'COPY'; }, 2000);
+                },
+
+                shareOnX() {
+                    const text = encodeURIComponent(`I just got a Code Aura score of ${this.auraScore} on Code Roast! 🚀\n\nStatus: ${this.auraScore > 0 ? 'Ascended' : 'Cooked'}\n#CodeRoast #67maxxing`);
+                    window.open(`https://twitter.com/intent/tweet?text=${text}`);
                 }
             }
         }
