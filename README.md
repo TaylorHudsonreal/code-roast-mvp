@@ -1,35 +1,31 @@
-# 🔥 Code Roast & Re-Factor v4.0: Tycoon Edition
+# 🔥 Code Roast & Re-Factor | v4.1 Tycoon Edition
 
-The elitist, terminal-themed tool for roasting "peasant-tier" code has evolved. Introducing **v4.0: The Tycoon Update**, featuring monetization, advanced heuristics, and manically high aura levels.
+The ultimate elitist code-analysis tool. Roast your "peasant-tier" logic and ascend to "67maxxing" heights. Built for developers who value aura scores more than clean code (but we give you clean code too).
 
-## 💎 NEW: Tycoon Pro (v4.0)
+## 🚀 Legendary v4.1 Features
 
-We've added a mock monetization system to separate the peasants from the elite.
-- **Paywall Triggers**: God-tier features like '67maxxing' mode and the '67maxxing Gold' theme now require a Tycoon Pro subscription.
-- **Benefits of Pro**: 
-  - Zero aura loss on bad roasts.
-  - Priority roasting queue.
-  - Double emotional damage.
-  - Anti-Inspect-Element protection.
-- **Cheat Codes**: Rumors of a "67MAXXING" or "PEASANT_BYPASS" promo code are circulating the deep web.
-
-## ✨ Legendary Features
-
-- **🧠 Real-Time Code Heuristics**: Custom scanner for `var` usage, Python 2 syntax, deep nesting, and lazy variable naming.
-- **📊 Animated Aura Meter**: Dynamic gauge from -1000 (Cooked) to +1000 (Ascended).
-- **🎹 Retro Synth Audio**: Synthesized keyboard clicks, bleeps, and success chimes via Web Audio API.
-- **🎨 Elite Theme Engine**: 
-  - *Peasant Gray*: Standard judgment.
-  - *Hacker Green*: Matrix-style contrast.
-  - *67maxxing Gold*: Reserved for the Pro elite.
-- **🐦 Flex on X**: Integrated share card to brag about your Aura Score.
+- **🧠 Deep Heuristic Scanner**: A client-side "code smell" engine that detects `var` usage, Python 2 legacy, infinite loops, and lazy naming to build personalized, reactive roasts.
+- **📊 Dynamic Aura Meter**: An interactive gauge that tracks your "Code Aura" from -1000 (Cooked) to +1000 (Ascended).
+- **🎹 Retro Synth Engine**: Native Web Audio API implementation providing clicky keyboard sounds, success chimes, and error saw-waves.
+- **🎨 Ultra-High Aura Themes**: 
+  - **Peasant Gray**: The baseline experience.
+  - **Hacker Green**: Matrix-inspired terminal aesthetic.
+  - **67maxxing Gold**: A premium, luxury theme for the truly elite.
+- **💎 Tycoon Pro Paywall**: Premium features like the Gold Theme and 67maxxing Roast Mode are now behind a polished, high-contrast paywall.
+- **💳 Cyber Checkout**: A dedicated, sleek checkout experience for "Tycoon Pro" at $67.67/mo (simulated for your amusement).
+- **🐦 Flex on X**: Generate custom "Flex" cards to share your Aura Score with the world.
 
 ## 🛠 Tech Stack
 
-- **Styling**: Tailwind CSS
 - **Interactivity**: Alpine.js
-- **Audio**: Web Audio API (Synthesized oscillators)
-- **Deployment**: Vercel
+- **Styling**: Tailwind CSS
+- **Typography**: Inter & Fira Code
+- **Audio**: Web Audio API
+- **Deployment**: Vercel Ready
+
+## 🔒 No Shortcuts
+
+In v4.1, we have removed all bypass cheat codes. To achieve true Tycoon status, you must use the checkout (don't worry, it's fake credit cards only).
 
 ---
-&copy; 2026 Interaction Company of California. *Elevating auras, one roast at a time.*
+&copy; 2026 Interaction Company of California. *Elevating logic, one roast at a time.*
